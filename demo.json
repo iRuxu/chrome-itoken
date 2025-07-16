@@ -1,0 +1,6 @@
+{
+    "fromHost": "https://www.jx3box.com",
+    "toHost": ["http://localhost:8081", "http://localhost:51200"],
+    "localStorageKeys": ["token_version", "token", "created_at", "logged_in", "uid", "group", "avatar", "name", "status"],
+    "cookieKeys": ["token", "season_token"]
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Dev Helper 配置</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                padding: 20px;
+                max-width: 600px;
+            }
+            label {
+                display: block;
+                margin-top: 10px;
+                font-weight: bold;
+            }
+            input {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+                box-sizing: border-box;
+            }
+            button {
+                margin-top: 20px;
+                padding: 10px 20px;
+            }
+
+            .rss{
+                background: #fafbfc; padding: 20px; border: 1px solid #eee;
+                position: relative;
+            }
+            .rss label {
+                margin-top:0;
+            }
+            .rss button{
+                position: absolute;
+                right: 24px;
+                top: 25px;
+                padding:3px 10px;
+                z-index: 10;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="rss">
+            <label>远程配置加载</label>
+            <input type="text" id="rssUrl" placeholder="例如：https://rss_url.json" />
+            <button id="rssBtn">获取</button>
+        </div>
+
+        <h2>配置令牌同步</h2>
+
+        <label for="fromHost">From Host（来源域名）</label>
+        <input type="text" id="fromHost" placeholder="例如：https://example.com" />
+
+        <label for="toHost">To Host（目标地址）</label>
+        <input type="text" id="toHost" placeholder="例如：http://localhost:3800,http://localhost:51200" />
+
+        <label for="localStorageKey">LocalStorage Keys</label>
+        <input type="text" id="localStorageKeys" placeholder="例如：token,created_at" />
+
+        <label for="cookieKey">Cookie Keys</label>
+        <input type="text" id="cookieKeys" placeholder="例如：auth_token,role" />
+
+        <!-- <button id="clearBtn" style="margin-right: 10px;">清空</button> -->
+        <button id="saveBtn">保存配置</button>
+
+        <p id="status" style="color: green"></p>
+
+        <script src="options.js"></script>
+    </body>
+</html>

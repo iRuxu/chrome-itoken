@@ -1,0 +1,31 @@
+{
+    "name": "iToken",
+    "version": "0.1.0",
+    "manifest_version": 3,
+    "description": "抓取线上Token并同步到本地、绕过CORS调试限制",
+    "permissions": ["cookies", "storage", "scripting", "declarativeNetRequest", "tabs"],
+    "host_permissions": ["<all_urls>"],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "icons/logo.png"
+    },
+    "options_page": "options.html",
+    "background": {
+        "service_worker": "background.js"
+    },
+    "declarative_net_request": {
+        "rule_resources": [
+            {
+                "id": "cors-rules",
+                "enabled": true,
+                "path": "rules.json"
+            }
+        ]
+    },
+    "web_accessible_resources": [
+        {
+            "resources": ["demo.json"],
+            "matches": ["<all_urls>"]
+        }
+    ]
+}

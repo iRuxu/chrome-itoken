@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Dev Helper</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                width: 200px;
+                padding: 10px;
+            }
+            h3 {
+                margin: 0 0 10px 0;
+            }
+            button {
+                width: 100%;
+                padding: 8px;
+
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .btn-conf {
+                background-color: #eee;
+                color: #333;
+                margin-bottom: 10px;
+            }
+            .btn-conf:hover {
+                background-color: #ddd;
+            }
+
+            .btn-sync {
+                background-color: #007bff;
+                color: white;
+            }
+            .btn-sync:hover {
+                background-color: #0056b3;
+            }
+        </style>
+    </head>
+    <body>
+        <h3>iToken</h3>
+        <button class="btn btn-conf" id="openOptions">配置</button>
+        <button class="btn btn-sync" id="syncConf">更新</button>
+        <script src="popup.js"></script>
+    </body>
+</html>
