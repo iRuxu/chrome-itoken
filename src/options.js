@@ -24,10 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     throw new Error("远程配置格式错误");
                 }
                 document.getElementById("fromHost").value = data.fromHost || "";
-                document.getElementById("toHost").value = (data.toHost || []).join(",");
-                document.getElementById("localStorageKeys").value = (data.localStorageKeys || []).join(",");
-                document.getElementById("cookieKeys").value = (data.cookieKeys || []).join(",");
-                document.getElementById("corsHost").value = (data.corsHost || []).join("\n");
+                document.getElementById("toHost").value = data.toHost || "";
+                document.getElementById("localStorageKeys").value = data.localStorageKeys || "";
+                document.getElementById("cookieKeys").value = data.cookieKeys || "";
+                document.getElementById("corsHost").value = data.corsHost || "";
             })
             .catch((err) => {
                 console.error("配置加载失败", err);

@@ -3,27 +3,37 @@ async function updateCorsRules() {
     const { config } = await chrome.storage.local.get("config");
     if (!config?.corsHost?.length) return;
 
-    const rules = config.corsHost.map((url, index) => {
-        const urlObj = new URL(url);
-        return {
-            id: 1000 + index,
-            priority: 1,
-            action: {
-                type: "modifyHeaders",
-                requestHeaders: [
-                    { header: "origin", operation: "set", value: config.fromHost }
-                ],
-                responseHeaders: [
-                    { header: "Access-Control-Allow-Origin", operation: "set", value: "*" },
-                    { header: "Access-Control-Allow-Credentials", operation: "set", value: "true" }
-                ]
-            },
-            condition: {
-                urlFilter: `|${urlObj.origin}/`,
-                resourceTypes: ["xmlhttprequest"]
+    const rules = config.corsHost
+        .filter(url => {
+            try {
+                new URL(url); // 测试是否合法
+                return true;
+            } catch (e) {
+                console.warn("[iToken] 无效URL，已跳过：", url);
+                return false;
             }
-        };
-    });
+        })
+        .map((url, index) => {
+            const urlObj = new URL(url);
+            return {
+                id: 1000 + index,
+                priority: 1,
+                action: {
+                    type: "modifyHeaders",
+                    requestHeaders: [
+                        { header: "origin", operation: "set", value: config.fromHost }
+                    ],
+                    responseHeaders: [
+                        { header: "Access-Control-Allow-Origin", operation: "set", value: "*" },
+                        { header: "Access-Control-Allow-Credentials", operation: "set", value: "true" }
+                    ]
+                },
+                condition: {
+                    urlFilter: `|${urlObj.origin}/`,
+                    resourceTypes: ["xmlhttprequest", "fetch"]
+                }
+            };
+        });
 
     console.log("[iToken]注入cors规则", rules);
 
