@@ -18,5 +18,6 @@
             "resources": ["demo.json"],
             "matches": ["<all_urls>"]
         }
-    ]
+    ],
+    "offline_enabled": true
 }
