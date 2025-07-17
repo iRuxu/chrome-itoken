@@ -66,25 +66,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 const toTab = toTabs[i];
                 const host = toHosts[i];
 
-                await chrome.scripting.executeScript({
-                    target: { tabId: toTab.id },
-                    func: ({ localStorageData }) => {
-                        for (const key in localStorageData) {
-                            localStorage.setItem(key, localStorageData[key]);
-                        }
-                    },
-                    args: [{ localStorageData }]
-                });
+                try {
+                    // 检查是否是错误页面
+                    const frames = await chrome.webNavigation.getAllFrames({ tabId: toTab.id });
+                    const mainFrame = frames.find(f => f.frameId === 0);
 
-                const toURL = new URL(host);
-                for (const key in cookieData) {
-                    await chrome.cookies.set({
-                        url: toURL.origin,
-                        name: key,
-                        value: cookieData[key],
-                        domain: toURL.hostname,
-                        path: "/"
+                    if (!mainFrame || mainFrame.errorOccurred) {
+                        console.warn(`[跳过] tabId=${toTab.id} 页面加载失败，可能未启动或是错误页`);
+                        continue;
+                    }
+
+                    // 注入 localStorage
+                    await chrome.scripting.executeScript({
+                        target: { tabId: toTab.id },
+                        func: ({ localStorageData }) => {
+                            for (const key in localStorageData) {
+                                localStorage.setItem(key, localStorageData[key]);
+                            }
+                        },
+                        args: [{ localStorageData }]
                     });
+
+                    // 写入 cookie
+                    const toURL = new URL(host);
+                    for (const key in cookieData) {
+                        await chrome.cookies.set({
+                            url: toURL.origin,
+                            name: key,
+                            value: cookieData[key],
+                            domain: toURL.hostname,
+                            path: "/"
+                        });
+                    }
+
+                    console.log(`[同步成功] tabId=${toTab.id} ${host}`);
+
+                } catch (err) {
+                    console.error(`[跳过] tabId=${toTab.id} ${host} 同步失败：`, err.message);
+                    continue;
                 }
             }
 

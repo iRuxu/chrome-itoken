@@ -20,23 +20,32 @@
                 margin-top: 5px;
                 box-sizing: border-box;
             }
+            textarea {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+                box-sizing: border-box;
+                resize: vertical;
+            }
             button {
                 margin-top: 20px;
                 padding: 10px 20px;
             }
 
-            .rss{
-                background: #fafbfc; padding: 20px; border: 1px solid #eee;
+            .rss {
+                background: #fafbfc;
+                padding: 20px;
+                border: 1px solid #eee;
                 position: relative;
             }
             .rss label {
-                margin-top:0;
+                margin-top: 0;
             }
-            .rss button{
+            .rss button {
                 position: absolute;
                 right: 24px;
                 top: 25px;
-                padding:3px 10px;
+                padding: 3px 10px;
                 z-index: 10;
             }
         </style>
@@ -62,7 +71,15 @@
         <label for="cookieKey">Cookie Keys</label>
         <input type="text" id="cookieKeys" placeholder="例如：auth_token,role" />
 
-        <!-- <button id="clearBtn" style="margin-right: 10px;">清空</button> -->
+        <div style="display: none">
+            <h2>配置跨域支持</h2>
+            <label for="fromHost"
+                >CORS <a href="https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest?hl=zh-cn#property-RuleCondition-urlFilter" target="_blank">[urlFilter Rule]</a></label
+            >
+            <textarea id="corsHost" placeholder="用逗号分隔或每行一个" rows="8"></textarea>
+        </div>
+
+        <button id="clearBtn" style="margin-right: 10px; display: none">清空</button>
         <button id="saveBtn">保存配置</button>
 
         <p id="status" style="color: green"></p>

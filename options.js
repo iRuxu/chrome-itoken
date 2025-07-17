@@ -1,8 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-
-    // 订阅区
-    // ================
+    // =============== 远程配置加载 ===============
     const remoteUrlInput = document.getElementById("rssUrl");
     const fetchRemoteBtn = document.getElementById("rssBtn");
 
@@ -13,10 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // 如果是相对路径（如 demo.json），自动转为插件资源路径
         const url = rawUrl.startsWith("http")
             ? rawUrl
-            : chrome.runtime.getURL(rawUrl); // 转成 chrome-extension://....../demo.json
+            : chrome.runtime.getURL(rawUrl); // 兼容本地插件内 JSON 文件
 
         fetch(url)
             .then((res) => {
@@ -24,11 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 return res.json();
             })
             .then((data) => {
-                // 写入表单
+                if (!data || typeof data !== "object") {
+                    throw new Error("远程配置格式错误");
+                }
                 document.getElementById("fromHost").value = data.fromHost || "";
                 document.getElementById("toHost").value = (data.toHost || []).join(",");
                 document.getElementById("localStorageKeys").value = (data.localStorageKeys || []).join(",");
                 document.getElementById("cookieKeys").value = (data.cookieKeys || []).join(",");
+                document.getElementById("corsHost").value = (data.corsHost || []).join("\n");
             })
             .catch((err) => {
                 console.error("配置加载失败", err);
@@ -36,43 +35,49 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     });
 
-    // 表单区
-    // ================
+    // =============== 表单项 ===============
     const fromHostInput = document.getElementById("fromHost");
     const toHostInput = document.getElementById("toHost");
     const lsKeysInput = document.getElementById("localStorageKeys");
     const cookieKeysInput = document.getElementById("cookieKeys");
+    const corsHostTextarea = document.getElementById("corsHost");
     const saveBtn = document.getElementById("saveBtn");
     const status = document.getElementById("status");
 
-    // 自动恢复配置
+    // =============== 自动恢复配置 ===============
     chrome.storage.local.get("config", (res) => {
         const config = res.config || {};
         fromHostInput.value = config.fromHost || "";
         toHostInput.value = (config.toHost || []).join(",");
         lsKeysInput.value = (config.localStorageKeys || []).join(",");
         cookieKeysInput.value = (config.cookieKeys || []).join(",");
+        corsHostTextarea.value = (config.corsHost || []).join("\n");
     });
 
-    // 保存配置
+    // =============== 保存配置 ===============
     saveBtn.addEventListener("click", () => {
         const config = {
             fromHost: fromHostInput.value.trim(),
             toHost: toHostInput.value
-                .split(",")
+                .split(/,|\n/)
                 .map((v) => v.trim())
                 .filter((v) => v),
             localStorageKeys: lsKeysInput.value
-                .split(",")
+                .split(/,|\n/)
                 .map((v) => v.trim())
                 .filter((v) => v),
             cookieKeys: cookieKeysInput.value
-                .split(",")
+                .split(/,|\n/)
                 .map((v) => v.trim())
                 .filter((v) => v),
+            corsHost: corsHostTextarea.value
+                .split(/,|\n/)
+                .map(line => line.trim())
+                .filter(Boolean)
         };
 
         chrome.storage.local.set({ config }, () => {
+            chrome.runtime.sendMessage({ type: "updateCorsRules" });
             status.textContent = "配置已保存 ✅";
             setTimeout(() => {
                 status.textContent = "";
@@ -80,15 +85,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 清空配置
+    // =============== 清空配置 ===============
     const clearBtn = document.getElementById("clearBtn");
     clearBtn.addEventListener("click", () => {
-        document.getElementById("fromHost").value = "";
-        document.getElementById("toHost").value = "";
-        document.getElementById("localStorageKeys").value = "";
-        document.getElementById("cookieKeys").value = "";
+        fromHostInput.value = "";
+        toHostInput.value = "";
+        lsKeysInput.value = "";
+        cookieKeysInput.value = "";
+        corsHostTextarea.value = "";
     });
-
-
-
 });
