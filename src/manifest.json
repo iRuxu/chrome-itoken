@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "manifest_version": 3,
     "description": "抓取线上Token并同步到本地",
-    "permissions": ["cookies", "storage", "scripting", "tabs", "declarativeNetRequest", "declarativeNetRequestWithHostAccess"],
+    "permissions": ["cookies", "storage", "scripting", "tabs", "declarativeNetRequest", "declarativeNetRequestWithHostAccess","webNavigation"],
     "host_permissions": ["<all_urls>"],
     "action": {
         "default_popup": "popup.html",
