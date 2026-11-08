@@ -302,10 +302,11 @@ input:focus, textarea:focus {
 #teamPreset {
     width: 100%;
     min-width: 0;
-    padding: 8px 12px;
+    appearance: none;
+    padding: 8px 36px 8px 12px;
     border: 1px solid var(--border);
     border-radius: 12px;
-    background: var(--surface-muted);
+    background: var(--surface-muted) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='m4 6 4 4 4-4' stroke='%23334155' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center / 16px;
     color: var(--text);
     font: inherit;
 }
@@ -313,4 +314,71 @@ input:focus, textarea:focus {
 #teamPreset:focus-visible {
     outline: 2px solid var(--focus);
     outline-offset: 1px;
+}
+
+@supports (appearance: base-select) and selector(::picker(select)) {
+    #teamPreset,
+    #teamPreset::picker(select) {
+        appearance: base-select;
+    }
+
+    #teamPreset {
+        align-items: center;
+        min-height: 42px;
+        padding: 8px 12px;
+        background: var(--surface-muted);
+        cursor: pointer;
+    }
+
+    #teamPreset:disabled {
+        cursor: default;
+    }
+
+    #teamPreset::picker-icon {
+        color: var(--muted);
+    }
+
+    #teamPreset:open::picker-icon {
+        color: var(--primary-hover);
+        rotate: 180deg;
+    }
+
+    #teamPreset::picker(select) {
+        width: anchor-size(width);
+        margin-block: 6px;
+        padding: 6px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: var(--panel-shadow);
+    }
+
+    #teamPreset option {
+        min-height: 38px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    #teamPreset option:hover,
+    #teamPreset option:focus-visible {
+        background: var(--surface-muted);
+    }
+
+    #teamPreset option:checked {
+        background: var(--primary-soft);
+        color: var(--primary-hover);
+        font-weight: 600;
+    }
+
+    #teamPreset option::checkmark {
+        order: 1;
+        margin-inline-start: auto;
+        color: var(--primary-hover);
+    }
+
+    #teamPreset:enabled option[value=""] {
+        display: none;
+    }
 }

@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const fileInput = document.getElementById("configFile");
     const saveBtn = document.getElementById("saveBtn");
     const status = document.getElementById("status");
-    const storage = globalThis.chrome?.storage?.local;
+    const extensionStorage = globalThis.chrome?.storage?.local;
+    const previewKey = "itoken-preview-config";
     const fields = {
         fromHost: document.getElementById("fromHost"),
         toHost: document.getElementById("toHost"),
@@ -40,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function importConfig(load) {
         try {
             fillConfig(await load());
-            status.textContent = "配置已填入，请检查后保存。";
+            status.textContent = "配置已填入，请检查后点击「应用配置」。";
         } catch (err) {
             alert(`配置导入失败：${err.message}`);
         }
@@ -73,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
         teamPresetRow.hidden = !useTeamPreset.checked;
         remoteImportRow.hidden = useTeamPreset.checked;
         importHint.textContent = useTeamPreset.checked
-            ? "选择团队方案并加载，检查后点击下方的「保存配置」。"
+            ? "选择团队方案并加载，检查后点击下方的「应用配置」。"
             : remoteHint;
     }
 
@@ -127,22 +128,30 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => URL.revokeObjectURL(url), 1000);
     });
 
-    if (storage) {
-        storage.get("config").then(({ config }) => {
+    async function restoreConfig() {
+        try {
+            const config = extensionStorage
+                ? (await extensionStorage.get("config")).config
+                : JSON.parse(localStorage.getItem(previewKey));
             if (config) fillConfig(config);
-        }).catch(err => {
+        } catch (err) {
             status.textContent = `读取配置失败：${err.message}`;
-        });
-    } else {
-        saveBtn.disabled = true;
-        status.textContent = "请在扩展中保存配置。";
+        }
     }
+
+    restoreConfig();
 
     saveBtn.addEventListener("click", async () => {
         try {
-            await storage.set({ config: readConfig() });
-            chrome.runtime.sendMessage({ type: "updateCorsRules" });
-            status.textContent = "配置已保存 ✅";
+            const config = readConfig();
+            if (extensionStorage) {
+                await extensionStorage.set({ config });
+                chrome.runtime.sendMessage({ type: "updateCorsRules" });
+                status.textContent = "配置已保存，下次同步时生效。";
+            } else {
+                localStorage.setItem(previewKey, JSON.stringify(config));
+                status.textContent = "已保存到预览页，可刷新验证。";
+            }
         } catch (err) {
             status.textContent = `保存失败：${err.message}`;
         }
