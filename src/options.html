@@ -1,89 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
     <head>
         <meta charset="UTF-8" />
-        <title>Dev Helper 配置</title>
-        <style>
-            body {
-                font-family: sans-serif;
-                padding: 20px;
-                max-width: 600px;
-            }
-            label {
-                display: block;
-                margin-top: 10px;
-                font-weight: bold;
-            }
-            input {
-                width: 100%;
-                padding: 8px;
-                margin-top: 5px;
-                box-sizing: border-box;
-            }
-            textarea {
-                width: 100%;
-                padding: 8px;
-                margin-top: 5px;
-                box-sizing: border-box;
-                resize: vertical;
-            }
-            button {
-                margin-top: 20px;
-                padding: 10px 20px;
-            }
-
-            .rss {
-                background: #fafbfc;
-                padding: 20px;
-                border: 1px solid #eee;
-                position: relative;
-            }
-            .rss label {
-                margin-top: 0;
-            }
-            .rss button {
-                position: absolute;
-                right: 24px;
-                top: 25px;
-                padding: 3px 10px;
-                z-index: 10;
-            }
-        </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>iToken · 同步设置</title>
+        <link rel="stylesheet" href="ui.css" />
     </head>
     <body>
-        <div class="rss">
-            <label>远程配置加载</label>
-            <input type="text" id="rssUrl" placeholder="例如：https://rss_url.json" />
-            <button id="rssBtn">获取</button>
-        </div>
+        <main class="settings">
+            <header class="brand">
+                <img src="icons/logo.png" alt="" width="44" height="44" />
+                <div>
+                    <h1>iToken</h1>
+                    <p>开发环境令牌同步</p>
+                </div>
+            </header>
 
-        <h2>配置令牌同步</h2>
+            <section class="panel" aria-labelledby="import-title">
+                <h2 id="import-title">导入配置</h2>
+                <p class="section-hint" id="import-hint">从 JSON 地址读取配置，检查后点击下方的「保存配置」。</p>
+                <div class="import-row">
+                    <input type="text" id="rssUrl" aria-labelledby="import-title" aria-describedby="import-hint"
+                        placeholder="https://example.com/config.json" spellcheck="false" />
+                    <button type="button" id="rssBtn" class="button button-soft">获取配置</button>
+                </div>
+            </section>
 
-        <label for="fromHost">From Host（来源域名）</label>
-        <input type="text" id="fromHost" placeholder="例如：https://example.com" />
+            <section class="panel" aria-labelledby="sync-title">
+                <h2 id="sync-title">同步设置</h2>
+                <p class="section-hint">指定登录来源、目标地址，以及需要同步的键名。</p>
 
-        <label for="toHost">To Host（目标地址）</label>
-        <input type="text" id="toHost" placeholder="例如：http://localhost:3800,http://localhost:51200" />
+                <div class="fields">
+                    <div class="field">
+                        <label for="fromHost">来源站点</label>
+                        <input type="text" id="fromHost" placeholder="https://example.com" spellcheck="false" />
+                    </div>
 
-        <label for="localStorageKey">LocalStorage Keys</label>
-        <input type="text" id="localStorageKeys" placeholder="例如：token,created_at" />
+                    <div class="field">
+                        <label for="toHost">目标地址</label>
+                        <input type="text" id="toHost" placeholder="http://localhost:51200"
+                            aria-describedby="target-hint" spellcheck="false" />
+                        <p id="target-hint" class="hint">多个地址用逗号分隔。</p>
+                    </div>
 
-        <label for="cookieKey">Cookie Keys</label>
-        <input type="text" id="cookieKeys" placeholder="例如：auth_token,role" />
+                    <div class="field">
+                        <label for="localStorageKeys">LocalStorage 键</label>
+                        <input type="text" id="localStorageKeys" placeholder="token,created_at"
+                            aria-describedby="keys-hint" spellcheck="false" />
+                    </div>
 
-        <div style="display: none">
-            <h2>配置跨域支持</h2>
-            <label for="fromHost"
-                >CORS <a href="https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest?hl=zh-cn#property-RuleCondition-urlFilter" target="_blank">[urlFilter Rule]</a></label
-            >
-            <textarea id="corsHost" placeholder="用逗号分隔或每行一个" rows="8"></textarea>
-        </div>
+                    <div class="field">
+                        <label for="cookieKeys">Cookie 键</label>
+                        <input type="text" id="cookieKeys" placeholder="token,season_token"
+                            aria-describedby="keys-hint" spellcheck="false" />
+                        <p id="keys-hint" class="hint">多个键名用逗号分隔。</p>
+                    </div>
+                </div>
 
-        <button id="clearBtn" style="margin-right: 10px; display: none">清空</button>
-        <button id="saveBtn">保存配置</button>
+                <div hidden>
+                    <label for="corsHost">CORS</label>
+                    <textarea id="corsHost" rows="8"></textarea>
+                </div>
 
-        <p id="status" style="color: green"></p>
-
+                <footer class="panel-footer">
+                    <p id="status" role="status"></p>
+                    <button type="button" id="clearBtn" hidden>清空</button>
+                    <button type="button" id="saveBtn" class="button button-primary">保存配置</button>
+                </footer>
+            </section>
+        </main>
         <script src="options.js"></script>
     </body>
 </html>

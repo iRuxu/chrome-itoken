@@ -28,6 +28,19 @@
 4. Click "Load unpacked" and select the extension folder
 5. Done!
 
+## Local UI preview
+
+Run `npm run dev` from the repository root. No dependency installation is required.
+
+- Settings: http://127.0.0.1:5173/
+- Popup: http://127.0.0.1:5173/popup.html
+
+Refresh the page to see changes. This preview serves the extension markup and styles without its Chrome API scripts. To test configuration saving and token sync, load `src/` as an unpacked Chrome extension.
+
+## Build a release ZIP
+
+Run `npm run build` from the repository root. It uses the system `zip` command and writes `dist/itoken.zip`, with `manifest.json` at the archive root. For a release, update the version in `src/manifest.json` before building.
+
 ## 📷 Screenshots
 
 **Extension Popup:**

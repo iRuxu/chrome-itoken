@@ -1,0 +1,211 @@
+:root {
+    color-scheme: light;
+    --page: #f6f8fa;
+    --surface: #fff;
+    --surface-muted: #f8fafc;
+    --ink: #0f172a;
+    --text: #334155;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --primary: #5b5cf5;
+    --primary-hover: #4f46e5;
+    --primary-soft: #eef2ff;
+    --focus: #a5b4fc;
+    --focus-ring: 0 0 0 3px rgb(91 92 245 / 16%);
+    --panel-shadow: 0 12px 32px rgb(15 23 42 / 6%);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 14px/1.5 system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+h1, h2, p {
+    margin: 0;
+}
+
+.settings {
+    max-width: 780px;
+    margin-inline: auto;
+    padding: 40px 20px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.settings > .brand {
+    margin-bottom: 24px;
+}
+
+.brand img {
+    display: block;
+    border-radius: 10px;
+}
+
+.brand h1 {
+    font-size: 26px;
+    line-height: 1.15;
+}
+
+.brand p {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.panel {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: var(--surface);
+    box-shadow: var(--panel-shadow);
+}
+
+.panel + .panel {
+    margin-top: 16px;
+}
+
+.panel h2 {
+    font-size: 18px;
+}
+
+.section-hint {
+    margin: 4px 0 16px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.import-row {
+    display: flex;
+    gap: 10px;
+}
+
+.fields {
+    display: grid;
+    gap: 16px;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text);
+    font-weight: 600;
+}
+
+.hint {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+input, textarea, .button {
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font: inherit;
+    transition: background-color 150ms, border-color 150ms, box-shadow 150ms;
+}
+
+input, textarea {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 12px;
+    border-color: var(--border);
+    background: var(--surface-muted);
+    color: var(--ink);
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+
+input::placeholder {
+    color: var(--muted);
+}
+
+input:focus, textarea:focus, .button:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+    box-shadow: var(--focus-ring);
+}
+
+input:focus, textarea:focus {
+    background: var(--surface);
+}
+
+.button {
+    min-height: 42px;
+    padding: 8px 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.button-primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.button-primary:hover {
+    background: var(--primary-hover);
+}
+
+.button-soft {
+    background: var(--primary-soft);
+    color: var(--primary-hover);
+}
+
+.button-soft:hover {
+    border-color: var(--focus);
+}
+
+.panel-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+#status {
+    color: #15803d;
+    font-size: 13px;
+}
+
+.popup {
+    width: 300px;
+    padding: 10px;
+}
+
+.popup .panel {
+    padding: 16px;
+    border-radius: 18px;
+}
+
+.popup .brand h1 {
+    font-size: 20px;
+}
+
+.popup-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+@media (max-width: 480px) {
+    .settings {
+        padding: 24px 12px;
+    }
+
+    .settings .panel {
+        padding: 16px;
+    }
+}

@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     });
 
-                    alert("页面已打开，请在加载完成后再次点击“更新”按钮");
+                    alert("页面已打开，请在加载完成后再次点击“立即同步”按钮");
                     return;
                 }
             }
