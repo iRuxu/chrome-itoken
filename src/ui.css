@@ -209,3 +209,64 @@ input:focus, textarea:focus {
         padding: 16px;
     }
 }
+
+.config-menu {
+    position: relative;
+    margin-right: auto;
+}
+
+.config-menu summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+}
+
+.config-menu summary::-webkit-details-marker {
+    display: none;
+}
+
+.config-menu-items {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+    z-index: 1;
+    min-width: 132px;
+    padding: 4px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: var(--panel-shadow);
+}
+
+.config-menu-items button {
+    width: 100%;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.config-menu-items button:hover {
+    background: var(--primary-soft);
+}
+
+.button:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+@media (max-width: 480px) {
+    .panel-footer {
+        flex-wrap: wrap;
+    }
+
+    #status:not(:empty) {
+        order: 1;
+        width: 100%;
+    }
+}

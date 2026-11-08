@@ -35,7 +35,9 @@ Run `npm run dev` from the repository root. No dependency installation is requir
 - Settings: http://127.0.0.1:5173/
 - Popup: http://127.0.0.1:5173/popup.html
 
-Refresh the page to see changes. This preview serves the extension markup and styles without its Chrome API scripts. To test configuration saving and token sync, load `src/` as an unpacked Chrome extension.
+Refresh the page to see changes. The settings preview supports configuration import and export. To save configuration and sync tokens, load `src/` as an unpacked Chrome extension.
+
+Use the **配置文件** menu to import a local JSON file or export the current form values as JSON. Review imported values before saving them.
 
 ## Build a release ZIP
 

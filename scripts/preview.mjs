@@ -8,6 +8,8 @@ const pages = new Map([
     ["/popup.html", "text/html; charset=utf-8"]
 ]);
 const assets = new Map([
+    ["/options.js", "text/javascript; charset=utf-8"],
+    ["/demo.json", "application/json; charset=utf-8"],
     ["/ui.css", "text/css; charset=utf-8"],
     ["/icons/logo.png", "image/png"]
 ]);
@@ -27,8 +29,8 @@ createServer(async (request, response) => {
 
     try {
         const source = await readFile(new URL(`../src${path}`, import.meta.url));
-        const body = pages.has(path)
-            ? source.toString("utf8").replace(/<script src="(?:options|popup)\.js"><\/script>/, "")
+        const body = path === "/popup.html"
+            ? source.toString("utf8").replace('<script src="popup.js"></script>', "")
             : source;
         response.writeHead(200, { "Content-Type": contentType, "Cache-Control": "no-store" }).end(body);
     } catch {

@@ -63,8 +63,15 @@
                 </div>
 
                 <footer class="panel-footer">
+                    <details id="configMenu" class="config-menu">
+                        <summary class="button button-soft">配置文件 <span aria-hidden="true">▾</span></summary>
+                        <div class="config-menu-items">
+                            <button type="button" id="importFile">导入配置</button>
+                            <button type="button" id="exportFile">导出配置</button>
+                        </div>
+                    </details>
+                    <input type="file" id="configFile" accept=".json,application/json" hidden />
                     <p id="status" role="status"></p>
-                    <button type="button" id="clearBtn" hidden>清空</button>
                     <button type="button" id="saveBtn" class="button button-primary">保存配置</button>
                 </footer>
             </section>

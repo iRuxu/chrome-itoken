@@ -1,97 +1,105 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // =============== 远程配置加载 ===============
     const remoteUrlInput = document.getElementById("rssUrl");
     const fetchRemoteBtn = document.getElementById("rssBtn");
-
-    fetchRemoteBtn.addEventListener("click", () => {
-        const rawUrl = remoteUrlInput.value.trim();
-        if (!rawUrl) {
-            alert("请输入远程配置地址");
-            return;
-        }
-
-        const url = rawUrl.startsWith("http")
-            ? rawUrl
-            : chrome.runtime.getURL(rawUrl); // 兼容本地插件内 JSON 文件
-
-        fetch(url)
-            .then((res) => {
-                if (!res.ok) throw new Error("无法获取远程配置：" + res.statusText);
-                return res.json();
-            })
-            .then((data) => {
-                if (!data || typeof data !== "object") {
-                    throw new Error("远程配置格式错误");
-                }
-                document.getElementById("fromHost").value = data.fromHost || "";
-                document.getElementById("toHost").value = data.toHost || "";
-                document.getElementById("localStorageKeys").value = data.localStorageKeys || "";
-                document.getElementById("cookieKeys").value = data.cookieKeys || "";
-                document.getElementById("corsHost").value = data.corsHost || "";
-            })
-            .catch((err) => {
-                console.error("配置加载失败", err);
-                alert("配置加载失败，请检查地址或格式");
-            });
-    });
-
-    // =============== 表单项 ===============
-    const fromHostInput = document.getElementById("fromHost");
-    const toHostInput = document.getElementById("toHost");
-    const lsKeysInput = document.getElementById("localStorageKeys");
-    const cookieKeysInput = document.getElementById("cookieKeys");
-    const corsHostTextarea = document.getElementById("corsHost");
+    const fileInput = document.getElementById("configFile");
     const saveBtn = document.getElementById("saveBtn");
     const status = document.getElementById("status");
+    const storage = globalThis.chrome?.storage?.local;
+    const fields = {
+        fromHost: document.getElementById("fromHost"),
+        toHost: document.getElementById("toHost"),
+        localStorageKeys: document.getElementById("localStorageKeys"),
+        cookieKeys: document.getElementById("cookieKeys"),
+        corsHost: document.getElementById("corsHost")
+    };
 
-    // =============== 自动恢复配置 ===============
-    chrome.storage.local.get("config", (res) => {
-        const config = res.config || {};
-        fromHostInput.value = config.fromHost || "";
-        toHostInput.value = (config.toHost || []).join(",");
-        lsKeysInput.value = (config.localStorageKeys || []).join(",");
-        cookieKeysInput.value = (config.cookieKeys || []).join(",");
-        corsHostTextarea.value = (config.corsHost || []).join("\n");
-    });
+    function readConfig() {
+        return Object.fromEntries(Object.entries(fields).map(([key, field]) => [
+            key,
+            key === "fromHost" ? field.value.trim() : field.value.split(/[,\n]/).map(value => value.trim()).filter(Boolean)
+        ]));
+    }
 
-    // =============== 保存配置 ===============
-    saveBtn.addEventListener("click", () => {
-        const config = {
-            fromHost: fromHostInput.value.trim(),
-            toHost: toHostInput.value
-                .split(/,|\n/)
-                .map((v) => v.trim())
-                .filter((v) => v),
-            localStorageKeys: lsKeysInput.value
-                .split(/,|\n/)
-                .map((v) => v.trim())
-                .filter((v) => v),
-            cookieKeys: cookieKeysInput.value
-                .split(/,|\n/)
-                .map((v) => v.trim())
-                .filter((v) => v),
-            corsHost: corsHostTextarea.value
-                .split(/,|\n/)
-                .map(line => line.trim())
-                .filter(Boolean)
-        };
+    function fillConfig(config) {
+        if (!config || typeof config !== "object" || Array.isArray(config)) {
+            throw new Error("配置必须是 JSON 对象");
+        }
 
-        chrome.storage.local.set({ config }, () => {
-            chrome.runtime.sendMessage({ type: "updateCorsRules" });
-            status.textContent = "配置已保存 ✅";
-            setTimeout(() => {
-                status.textContent = "";
-            }, 2000);
+        const values = Object.entries(fields).map(([key, field]) => {
+            const value = config[key] ?? "";
+            if (typeof value === "string") return [field, value];
+            if (key !== "fromHost" && Array.isArray(value) && value.every(item => typeof item === "string")) {
+                return [field, value.join(key === "corsHost" ? "\n" : ",")];
+            }
+            throw new Error(`${key} 格式错误`);
+        });
+
+        for (const [field, value] of values) field.value = value;
+    }
+
+    async function importConfig(load) {
+        try {
+            fillConfig(await load());
+            status.textContent = "配置已填入，请检查后保存。";
+        } catch (err) {
+            alert(`配置导入失败：${err.message}`);
+        }
+    }
+
+    fetchRemoteBtn.addEventListener("click", async () => {
+        const rawUrl = remoteUrlInput.value.trim();
+        if (!rawUrl) return alert("请输入远程配置地址");
+
+        await importConfig(async () => {
+            const url = globalThis.chrome?.runtime?.getURL && !/^https?:\/\//i.test(rawUrl)
+                ? chrome.runtime.getURL(rawUrl)
+                : rawUrl;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
         });
     });
 
-    // =============== 清空配置 ===============
-    const clearBtn = document.getElementById("clearBtn");
-    clearBtn.addEventListener("click", () => {
-        fromHostInput.value = "";
-        toHostInput.value = "";
-        lsKeysInput.value = "";
-        cookieKeysInput.value = "";
-        corsHostTextarea.value = "";
+    const configMenu = document.getElementById("configMenu");
+    document.getElementById("importFile").addEventListener("click", () => {
+        configMenu.open = false;
+        fileInput.click();
+    });
+    fileInput.addEventListener("change", async () => {
+        const [file] = fileInput.files;
+        fileInput.value = "";
+        if (file) await importConfig(async () => JSON.parse(await file.text()));
+    });
+
+    document.getElementById("exportFile").addEventListener("click", () => {
+        configMenu.open = false;
+        const content = JSON.stringify(readConfig(), null, 4) + "\n";
+        const url = URL.createObjectURL(new Blob([content], { type: "application/json" }));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "itoken-config.json";
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+
+    if (storage) {
+        storage.get("config").then(({ config }) => {
+            if (config) fillConfig(config);
+        }).catch(err => {
+            status.textContent = `读取配置失败：${err.message}`;
+        });
+    } else {
+        saveBtn.disabled = true;
+        status.textContent = "请在扩展中保存配置。";
+    }
+
+    saveBtn.addEventListener("click", async () => {
+        try {
+            await storage.set({ config: readConfig() });
+            chrome.runtime.sendMessage({ type: "updateCorsRules" });
+            status.textContent = "配置已保存 ✅";
+        } catch (err) {
+            status.textContent = `保存失败：${err.message}`;
+        }
     });
 });
