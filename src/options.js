@@ -60,6 +60,51 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    const useTeamPreset = document.getElementById("useTeamPreset");
+    const teamPresetRow = document.getElementById("teamPresetRow");
+    const remoteImportRow = document.getElementById("remoteImportRow");
+    const presetSelect = document.getElementById("teamPreset");
+    const applyPreset = document.getElementById("applyPreset");
+    const importHint = document.getElementById("import-hint");
+    const remoteHint = importHint.textContent;
+    let presets = [];
+
+    function updateImportMode() {
+        teamPresetRow.hidden = !useTeamPreset.checked;
+        remoteImportRow.hidden = useTeamPreset.checked;
+        importHint.textContent = useTeamPreset.checked
+            ? "选择团队方案并加载，检查后点击下方的「保存配置」。"
+            : remoteHint;
+    }
+
+    useTeamPreset.addEventListener("change", updateImportMode);
+    updateImportMode();
+
+    fetch("preset/index.json").then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+    }).then(data => {
+        if (!Array.isArray(data) || !data.length || !data.every(item => typeof item?.name === "string" && item.config)) {
+            throw new Error("预设清单为空或格式不正确");
+        }
+        presets = data;
+        presetSelect.replaceChildren(
+            new Option("请选择团队方案", ""),
+            ...presets.map((preset, index) => new Option(preset.name, index))
+        );
+        presetSelect.disabled = false;
+    }).catch(() => {
+        presetSelect.options[0].textContent = "暂无可用的团队预设";
+    });
+
+    presetSelect.addEventListener("change", () => {
+        applyPreset.disabled = presetSelect.value === "";
+    });
+    applyPreset.addEventListener("click", () => {
+        const preset = presets[presetSelect.value];
+        if (preset) return importConfig(() => preset.config);
+    });
+
     const configMenu = document.getElementById("configMenu");
     document.getElementById("importFile").addEventListener("click", () => {
         configMenu.open = false;

@@ -270,3 +270,47 @@ input:focus, textarea:focus {
         width: 100%;
     }
 }
+
+.import-header,
+.team-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.import-header {
+    justify-content: space-between;
+}
+
+.team-toggle {
+    color: var(--primary-hover);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.team-toggle input {
+    width: auto;
+    margin: 0;
+    accent-color: var(--primary);
+}
+
+.import-row[hidden] {
+    display: none;
+}
+
+#teamPreset {
+    width: 100%;
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-muted);
+    color: var(--text);
+    font: inherit;
+}
+
+#teamPreset:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+}

@@ -2,3 +2,6 @@ _metadata/*
 .DS_Store
 dist/itoken.pem
 /dist/itoken.zip
+
+/preset/
+/dist/itoken-iruxu.zip

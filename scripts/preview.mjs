@@ -8,6 +8,7 @@ const pages = new Map([
     ["/popup.html", "text/html; charset=utf-8"]
 ]);
 const assets = new Map([
+    ["/preset/index.json", "application/json; charset=utf-8"],
     ["/options.js", "text/javascript; charset=utf-8"],
     ["/demo.json", "application/json; charset=utf-8"],
     ["/ui.css", "text/css; charset=utf-8"],
@@ -28,13 +29,13 @@ createServer(async (request, response) => {
     }
 
     try {
-        const source = await readFile(new URL(`../src${path}`, import.meta.url));
+        const source = await readFile(new URL(path === "/preset/index.json" ? `..${path}` : `../src${path}`, import.meta.url));
         const body = path === "/popup.html"
             ? source.toString("utf8").replace('<script src="popup.js"></script>', "")
             : source;
         response.writeHead(200, { "Content-Type": contentType, "Cache-Control": "no-store" }).end(body);
     } catch {
-        response.writeHead(500).end("Unable to load preview");
+        response.writeHead(path === "/preset/index.json" ? 404 : 500).end("Unable to load preview");
     }
 }).listen(port, host, () => {
     console.log(`配置页 http://${host}:${port}/`);
