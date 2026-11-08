@@ -29,7 +29,7 @@ createServer(async (request, response) => {
     }
 
     try {
-        const source = await readFile(new URL(path === "/preset/index.json" ? `..${path}` : `../src${path}`, import.meta.url));
+        const source = await readFile(new URL(`../src${path}`, import.meta.url));
         const body = path === "/popup.html"
             ? source.toString("utf8").replace('<script src="popup.js"></script>', "")
             : source;

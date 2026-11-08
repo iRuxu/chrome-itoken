@@ -73,6 +73,6 @@ MIT License
 Built with ❤️ by iRuxu
 ## Team presets (iruxu branch)
 
-Keep the private preset list in the local, Git-ignored `preset/index.json`. Its format is an array of entries such as `{"name":"Local development","config":{"fromHost":"https://example.com","toHost":["http://localhost:51200"],"localStorageKeys":["token"],"cookieKeys":[]}}`.
+The team preset list is tracked on the `iruxu` branch in `src/preset/index.json`. Its format is an array of entries such as `{"name":"Local development","config":{"fromHost":"https://example.com","toHost":["http://localhost:51200"],"localStorageKeys":["token"],"cookieKeys":[]}}`.
 
-`npm run dev` reads the local list. `npm run build` embeds it in `dist/itoken-iruxu.zip`. To use presets in Chrome, extract that ZIP and load the extracted folder as an unpacked extension. Share the resulting ZIP only with the intended team.
+`npm run dev` reads the local list. `npm run build` embeds it in `dist/itoken-iruxu.zip`. For local development, load `src/` directly as an unpacked Chrome extension. Share the resulting ZIP only with the intended team.

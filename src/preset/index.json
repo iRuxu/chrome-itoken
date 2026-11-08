@@ -1,0 +1,46 @@
+[
+    {
+        "name": "魔盒",
+        "config": {
+            "fromHost": "https://www.jx3box.com",
+            "toHost": [
+                "http://localhost:12028"
+            ],
+            "localStorageKeys": [
+                "token",
+                "created_at",
+                "logged_in",
+                "uid",
+                "group",
+                "name",
+                "avatar"
+            ],
+            "cookieKeys": [
+                "token"
+            ]
+        }
+    },
+    {
+        "name": "深莓",
+        "config": {
+            "fromHost": "https://dev.titan.deepberry.cn",
+            "toHost": [
+                "http://localhost:3800"
+            ],
+            "localStorageKeys": [
+                "token",
+                "created_at",
+                "logged_in",
+                "uid",
+                "group",
+                "name",
+                "avatar",
+                "TOKEN_TITAN_V2",
+                "TOKEN_TITAN"
+            ],
+            "cookieKeys": [
+                "token"
+            ]
+        }
+    }
+]
